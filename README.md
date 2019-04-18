@@ -5,6 +5,6 @@
 
 作者：aldal
 
-> - 01.合成BOM
-> - 02.数据透视表生成BOM
-> - 03.两个BOM进行比较
+> - [01.combine](01.combine)
+> - [02.PivotTable](02.PivotTable)
+> - [03.compare](03.compare)
