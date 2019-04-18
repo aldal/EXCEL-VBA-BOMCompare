@@ -1,0 +1,16 @@
+Sub combine()
+    Dim J As Integer
+    On Error Resume Next
+    Sheets(1).Select
+    Worksheets.Add    '在第一个工作表前新建一个sheet
+    Sheets(1).Name = "Combined"  '新sheet名称为Combined
+    Sheets(7).Activate             
+    Range("B26:M67").Select    '复制第7个sheet中的B26到M67单元格
+    Selection.Copy Destination:=Sheets(1).Range("A1")
+    For J = 8 To 90            '复制第8到第90个sheet中的B26到M67单元格
+        Sheets(J).Activate
+        Sheets(J).Range("B26").Resize(42, 12).Select
+        Selection.Copy Destination:=Sheets(1).Range("A65535").End(xlUp)(3)
+                    '粘贴到A65535单元格向上,最后一个非空的单元格的行号。
+    Next
+End Sub
