@@ -1,0 +1,37 @@
+Sub PivotTable()
+Dim arr, brr
+arr = Sheets(1).UsedRange
+Dim i, j, u, v, r As Integer
+Dim c
+'01中合成的清单，存在合并单元格。第
+Sheets(1).Cells(1, 14).Value = "物料编码"   '第14列放物料编码
+Sheets(1).Cells(1, 15).Value = "数量"       '第15列放物料数量
+
+For i = 2 To UBound(arr)      '遍历，从第二行到最后一行。这步是为了去除合并的单元格，在第14/15列复制一个新的没有合并单元格的物料清单。
+         Sheets(1).Cells(i, 14).Value = Sheets(1).Cells((2 * i - 3), 8).Value
+         Sheets(1).Cells(i, 15).Value = Sheets(1).Cells((2 * i - 3), 12).Value
+Next
+
+    ActiveWorkbook.PivotCaches.Create(SourceType:=xlDatabase, SourceData:= _
+        "Combined!R1C14:R1048576C15", Version:=xlPivotTableVersion14). _
+        CreatePivotTable TableDestination:="Combined!R1C17", TableName:="数据透视表1", _
+        DefaultVersion:=xlPivotTableVersion14
+    Sheets("Combined").Select
+    Cells(1, 17).Select
+    With ActiveSheet.PivotTables("数据透视表1").PivotFields("物料编码")
+        .Orientation = xlRowField
+        .Position = 1
+    End With
+    ActiveSheet.PivotTables("数据透视表1").AddDataField ActiveSheet.PivotTables("数据透视表1" _
+        ).PivotFields("数量"), "计数项:数量", xlCount
+    With ActiveSheet.PivotTables("数据透视表1").PivotFields("计数项:数量")
+        .Caption = "求和项:数量"
+        .Function = xlSum
+    End With
+
+    Columns("N:N").Select
+    Selection.NumberFormatLocal = "000000"  '第14、17列物料编码为12位数字，因此格式设置为邮政编码。
+    Columns("Q:Q").Select
+    Selection.NumberFormatLocal = "000000" 
+    
+End Sub
