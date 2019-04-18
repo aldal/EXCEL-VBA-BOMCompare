@@ -1,6 +1,7 @@
 Sub combine()
     Dim J As Integer
     On Error Resume Next
+    Application.ScreenUpdating = False
     Sheets(1).Select
     Worksheets.Add    '在第一个工作表前新建一个sheet
     Sheets(1).Name = "Combined"  '新sheet名称为Combined
@@ -13,4 +14,5 @@ Sub combine()
         Selection.Copy Destination:=Sheets(1).Range("A65535").End(xlUp)(3)
                     '粘贴到A65535单元格向上,最后一个非空的单元格的行号。
     Next
+    Application.ScreenUpdating = True
 End Sub
