@@ -1,0 +1,40 @@
+Sub compare()
+Dim arr, brr
+arr = Sheets(1).UsedRange    '第一个表位于sheet1，两列，一列物料编码、一列物料数量
+brr = Sheets(2).UsedRange    '第二个表位于sheet2，两列，一列物料编码、一列物料数量
+Dim i, j, u, v, r As Integer
+
+For i = 2 To UBound(arr)      '遍历sheet1，从第二行到最后一行
+       Sheets(3).Cells(i, 1).Value = Sheets(1).Cells(i, 1).Value
+       Sheets(3).Cells(i, 2).Value = Sheets(1).Cells(i, 2).Value     '复制sheet1物料到sheet3前两列
+
+     For j = 2 To UBound(brr)           '遍历sheet2，从第二行到最后一行
+       If brr(j, 1) = arr(i, 1) Then   '如果sheet2里物料号和sheet1的一样
+         Sheets(3).Cells(i, 3).Value = Sheets(2).Cells(j, 1).Value
+         Sheets(3).Cells(i, 4).Value = Sheets(2).Cells(j, 2).Value     '复制EBOM物料到表7三四列
+         If Sheets(3).Cells(i, 2).Value <> Sheets(3).Cells(i, 4).Value Then
+            Sheets(3).Cells(i, 5).Value = "不同"                      '如果物料号相同，但数量不一致，在第5列标注出来
+            Sheets(3).Cells(i, 5).Interior.ColorIndex = 7
+         End If
+       End If
+     Next
+Next
+
+Dim d
+Set d = CreateObject("scripting.dictionary")
+
+For i = 2 To UBound(arr)     '遍历sheet1，从第二行到最后一行
+   d.Add arr(i, 1), i       'sheet1的物料放到字典d里面
+Next
+
+r = Sheet3.Cells(65536, 1).End(xlUp).Row + 1   'sheet3第一列最下面的空行号
+For j = 2 To UBound(brr)             '遍历sheet2，从第二行到最后一行
+    If d.exists(brr(j, 1)) Then      '从sheet1的字典里找sheet2的物料
+    Else                             '如果sheet2中的这个物料sheet1的字典里没有
+     Sheets(3).Cells(r + 1, 3).Value = brr(j, 1) '把没有这个物料放到最下方没有物料的那一行的第3列
+     Sheets(3).Cells(r + 1, 4).Value = brr(j, 2) '把没有这个物料数量放到第4列
+     r = r + 1
+    End If
+Next
+
+End Sub
